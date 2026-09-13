@@ -1,0 +1,92 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2026-09-13T04:25:24.258601+00:00",
+  "repo": "thibmeu/draft-meunier-webbotauth-registry",
+  "labels": [
+    {
+      "name": "accessibility",
+      "description": "Barrier affecting people with disabilities",
+      "color": "f143ab"
+    },
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [
+    {
+      "number": 1,
+      "id": "I_kwDOUU9wZs8AAAABQp4NnA",
+      "title": "Support registries linking to registries",
+      "url": "https://github.com/thibmeu/draft-meunier-webbotauth-registry/issues/1",
+      "state": "OPEN",
+      "author": "thibmeu",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "The proposed specification for registries only allows linking to signature agent cards directly, which means all registries are stand alone and disconnected. \n\nRegistries should be able to link to other registries, allowing for a trust web that may allow some registries to become authoritative. This has benefits:\n\n1. If a registry is compromised, an authoritative registry may revoke trust in it.\n2. Today, identity binding is not solved, but an authoritative registry may detect conflicts in identities bound to signature agents by smaller registries. \n\n\n\n---\n\nTaken from the original issue: https://github.com/thibmeu/http-message-signatures-directory/issues/62\n",
+      "createdAt": "2026-09-10T13:12:24Z",
+      "updatedAt": "2026-09-10T13:12:24Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 2,
+      "id": "I_kwDOUU9wZs8AAAABQp4Obg",
+      "title": "[registry] Rename `Signature-Agent Card` to `Registry Card`",
+      "url": "https://github.com/thibmeu/draft-meunier-webbotauth-registry/issues/2",
+      "state": "OPEN",
+      "author": "thibmeu",
+      "authorAssociation": "OWNER",
+      "assignees": [],
+      "labels": [],
+      "body": "With the introduction of IP address, and the optionality of all fields, this would make it much simpler to reference and adopt.\n\nThe key feature is that you can have\n\n`Registry --> Card --> Metadata`\n\nMultiple registries can point to the same card which can reference metadata: jwks_uri, ips_uri, purpose, etc\n\n---\n\nTaken from the original issue: https://github.com/thibmeu/http-message-signatures-directory/issues/96\n",
+      "createdAt": "2026-09-10T13:12:26Z",
+      "updatedAt": "2026-09-10T13:12:26Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
+  "pulls": []
+}
