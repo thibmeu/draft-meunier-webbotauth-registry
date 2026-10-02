@@ -138,6 +138,7 @@ described in {{cimd-discovery}}.
     "rate-control": "429",
     "rate-expectation": "avg=10rps;max=100rps",
     "known-urls": ["/", "/robots.txt", "*.png"],
+    "execution-location": [{"geohash": "u09"}, {"geohash": "dr5"}],
     "ips_uri": "https://example.com/ips.json"
   }
 }
@@ -361,6 +362,36 @@ Example
 
 * `https://example.com/ips.json`
 
+### Execution Location {#signature-agent-parameter-execution-location}
+
+The `execution-location` parameter is an array of objects declaring the
+geographic areas in which the Signature Agent expects to execute. Each object
+MUST contain a `geohash` member whose value is a string of 1 to 12 characters
+from the lowercase alphabet `0123456789bcdefghjkmnpqrstuvwxyz`.
+
+A geohash encodes a geographic cell by repeatedly bisecting longitude
+`[-180, 180]` and latitude `[-90, 90]` in degrees, alternating longitude first,
+then latitude. Each bisection contributes a bit: 0 selects the lower half,
+1 the upper half. Each successive group of five bits, most significant bit
+first, indexes the alphabet above. Longer strings identify smaller cells;
+appending characters selects a cell within the cell identified by the prefix.
+The declared area is the entire cell, not its center.
+
+Multiple entries describe multiple expected execution areas. These areas are
+not the operator's headquarters, network egress locations, or requested content
+regions. An omitted parameter or an empty array conveys no location information.
+The parameter can be published before requests originate from the described
+areas; it does not specify scheduled changes or an effective time.
+
+One card MAY describe multiple execution areas and publish multiple signing
+keys through `jwks` or `jwks_uri`. Separate cards or keys per area are not
+required. The locations apply to the agent collectively and do not associate
+individual keys or requests with an area.
+
+Example
+
+* `[{"geohash": "u09"}, {"geohash": "dr5"}]`
+
 # Discovery
 
 A Signature Agent Card is discovered by dereferencing its `client_id`, as
@@ -548,9 +579,23 @@ Registry endpoints that require authentication as described in
 clients only. Registry operators SHOULD use authenticated endpoints when the
 enumeration of their registry entries is sensitive.
 
+## Execution Location Claims
+
+Execution locations are self-declared metadata, not authorization boundaries or
+proof of a request's execution location. Authentication of a card or request
+does not establish the accuracy of these claims. Clients MUST NOT infer a
+request's execution location solely from its signing key and this parameter.
+
 # Privacy Considerations
 
 TODO
+
+## Execution Location Disclosure
+
+Publishers SHOULD use the shortest geohashes sufficient for their purpose and
+SHOULD omit locations whose disclosure would expose an individual's location.
+More precise cells can reveal sensitive infrastructure locations. Consumers
+SHOULD NOT require greater precision than needed for their use case.
 
 ## Access Patterns
 
@@ -797,6 +842,23 @@ in {{web-bot-auth-extension}} in this registry.
 **Notes:**
 : N/A
 
+#### Execution Location Parameter
+
+**Parameter Name:**
+: execution-location
+
+**Parameter Description:**
+: Expected execution areas of the signature agent, represented by geohash cells.
+
+**Change Controller:**
+: IETF
+
+**Reference:**
+: {{signature-agent-parameter-execution-location}}
+
+**Notes:**
+: N/A
+
 --- back
 
 # Test Vectors
@@ -914,6 +976,7 @@ The editor would also like to thank the following individuals (listed in alphabe
 
 draft-meunier-webbotauth-registry-04
 
+- Add optional, variable-precision `execution-location` metadata for multi-region agents.
 - Defer `Signature-Key` to draft-hardt-httpbis-signature-key.
 - Make `rfc9309-compliance` a boolean.
 - Keep `purpose` open for further discussion.
