@@ -138,7 +138,7 @@ described in {{cimd-discovery}}.
     "rate-control": "429",
     "rate-expectation": "avg=10rps;max=100rps",
     "known-urls": ["/", "/robots.txt", "*.png"],
-    "execution-location": [{"geohash": "u09"}, {"geohash": "dr5"}],
+    "execution-location": ["u09", "dr5"],
     "ips_uri": "https://example.com/ips.json"
   }
 }
@@ -364,33 +364,21 @@ Example
 
 ### Execution Location {#signature-agent-parameter-execution-location}
 
-The `execution-location` parameter is an array of objects declaring the
-geographic areas in which the Signature Agent expects to execute. Each object
-MUST contain a `geohash` member whose value is a string of 1 to 12 characters
-from the lowercase alphabet `0123456789bcdefghjkmnpqrstuvwxyz`.
+The `execution-location` parameter is an array of geohash strings declaring
+expected execution areas, which MAY be published in advance. Each string MUST
+contain 1 to 12 characters from `0123456789bcdefghjkmnpqrstuvwxyz`.
+Each value denotes an entire cell; shorter values describe broader areas.
+Multiple areas share one card and do not identify a key's or request's location.
+An omitted parameter or an empty array conveys no location information.
 
-A geohash encodes a geographic cell by repeatedly bisecting longitude
-`[-180, 180]` and latitude `[-90, 90]` in degrees, alternating longitude first,
-then latitude. Each bisection contributes a bit: 0 selects the lower half,
-1 the upper half. Each successive group of five bits, most significant bit
-first, indexes the alphabet above. Longer strings identify smaller cells;
-appending characters selects a cell within the cell identified by the prefix.
-The declared area is the entire cell, not its center.
-
-Multiple entries describe multiple expected execution areas. These areas are
-not the operator's headquarters, network egress locations, or requested content
-regions. An omitted parameter or an empty array conveys no location information.
-The parameter can be published before requests originate from the described
-areas; it does not specify scheduled changes or an effective time.
-
-One card MAY describe multiple execution areas and publish multiple signing
-keys through `jwks` or `jwks_uri`. Separate cards or keys per area are not
-required. The locations apply to the agent collectively and do not associate
-individual keys or requests with an area.
+Geohash cells are obtained by alternating bisections of longitude `[-180, 180]`
+and latitude `[-90, 90]` in degrees, longitude first. Bits 0 and 1 select the
+lower and upper halves respectively; successive five-bit groups, most
+significant bit first, index the alphabet above.
 
 Example
 
-* `[{"geohash": "u09"}, {"geohash": "dr5"}]`
+* `["u09", "dr5"]`
 
 # Discovery
 
