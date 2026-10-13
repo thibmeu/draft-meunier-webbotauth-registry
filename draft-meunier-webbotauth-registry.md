@@ -43,25 +43,17 @@ normative:
   HTTP-MESSAGE-SIGNATURES: RFC9421
   HTTP: RFC9110
   HTTP-CACHE: RFC9111
-  HTTP-MORE-STATUS-CODE: RFC6585
   JAFAR: I-D.draft-illyes-webbotauth-jafar
   JWK: RFC7517
-  JWK-OKP: RFC8037
-  JWK-THUMBPRINT: RFC7638
 
 
 informative:
   AIPREF-VOCAB: I-D.draft-ietf-aipref-vocab
-  CBCP: I-D.draft-illyes-webbotauth-cbcp
   CDDL: RFC8610
   DATAURL: RFC2397
   OAUTH-BEARER: RFC6750
-  OPENID-CONNECT-DISCOVERY:
-    title: OpenID Connect Discovery 1.0
-    target: https://openid.net/specs/openid-connect-discovery-1_0.html
   PSK-TLS: RFC9257
   RATELIMIT-HEADER: I-D.draft-ietf-httpapi-ratelimit-headers
-  RFC8446:
   ROBOTSTXT: RFC9309
   UTF8: RFC3629
   WEB-LINKING: RFC8288
@@ -69,10 +61,11 @@ informative:
 --- abstract
 
 This document defines the "Signature Agent Card", a JSON metadata document that a
-signature agent using {{PROTOCOL}} publishes to describe itself: its identity,
-purpose, rate expectations, and cryptographic keys. Its parameters are drawn from
-the OAuth Dynamic Client Registration Metadata registry {{DCR}}, the same
-namespace used by {{CIMD}}, extended with a single `web_bot_auth` object. This
+signature agent using HTTP Message Signatures for bots publishes to describe
+itself: its identity, purpose, rate expectations, and cryptographic keys. Its
+parameters are drawn from the OAuth Dynamic Client Registration Metadata
+registry, the same namespace used by OAuth Client ID Metadata Documents,
+extended with a single `web_bot_auth` object. This
 document registers that object with IANA and establishes a registry for its
 members.
 
@@ -116,9 +109,8 @@ Because the card reuses the {{CIMD}} parameter namespace, an existing Client ID
 Metadata Document is a valid Signature Agent Card. A client that does not
 understand the `web_bot_auth` object ignores it.
 
-The Signature-Agent header is defined in {{Section 5.2.1 of PROTOCOL}}. A
-Signature Agent Card can be referenced from that header using `type=cimd`, as
-described in {{cimd-discovery}}.
+A Signature Agent Card can be referenced from the `Signature-Agent` header
+using `type=cimd`, as described in {{signature-agent-header}}.
 
 ~~~
 {
@@ -204,7 +196,10 @@ Example
 
 The `jwks_uri` parameter provides the URL of a JWK Set as defined in
 {{Section 5 of JWK}}, following the {{DCR}} semantics. {{DCR}} does not mandate
-a media type for the resource at `jwks_uri`.
+a media type for the resource at `jwks_uri`. If `jwks_uri` is the well-known URI
+registered in {{Section 8.1 of PROTOCOL}}, the resource is an HTTP Message
+Signatures Directory, and {{Section 5.5.1 of PROTOCOL}} applies, including its
+media type.
 
 When present, this parameter separates key material discovery from metadata
 discovery. Clients that need key material SHOULD fetch the key set at the
@@ -216,9 +211,11 @@ signature agent card metadata but key material is hosted elsewhere.
 A Signature Agent Card MUST NOT contain both `jwks_uri` and `jwks`. Clients
 SHOULD reject a card that contains both parameters.
 
-The resource at `jwks_uri` SHOULD be signed using {{HTTP-MESSAGE-SIGNATURES}}.
-Clients SHOULD validate the signature and ignore keys that do not carry a
-corresponding valid signature.
+The response at `jwks_uri` SHOULD carry the possession proofs defined in
+{{Appendix B.1 of PROTOCOL}}. Clients SHOULD validate them as described there,
+and SHOULD ignore keys without a valid proof. This is stricter than
+{{PROTOCOL}}, which lets a verifier use keys it resolved itself without proof:
+a card binds keys to metadata, so the key holder should vouch for that binding.
 
 The URI scheme MUST be `https`.
 
@@ -361,18 +358,24 @@ Example
 
 * `https://example.com/ips.json`
 
-# Discovery
+# Discovery {#discovery}
 
 A Signature Agent Card is discovered by dereferencing its `client_id`, as
 described in {{cimd-discovery}}, or from a registry.
 
-A registry is a list of URLs, each referring to a signature agent card. An entry
-MAY be the `client_id` of a Signature Agent Card.
+A registry is a list of entries. Each entry is an `https` URL or a `data` URL
+containing an inline Signature Agent Card.
 
-The URI scheme MUST be one of:
+A client fetches an `https` entry with `GET`. If the response media type is
+`application/jwk-set+json` ({{Section 8.5 of JWK}}) or
+`application/http-message-signatures-directory+json`
+({{Section 8.2 of PROTOCOL}}), the response is a JWK Set, and the entry is
+resolved as a `Signature-Agent` value ({{Section 5.5 of PROTOCOL}}). Otherwise,
+the entry is the `client_id` of a Signature Agent Card, and the response is
+processed as described in {{cimd-discovery}}.
 
-* https: Points to an HTTPS resource serving a signature agent card
-* data: Contains an inline signature agent card
+A JWK Set served with another media type, such as `application/json`, is
+therefore treated as a card, and rejected because it has no `client_id`.
 
 ## CIMD-Based Discovery {#cimd-discovery}
 
@@ -380,8 +383,9 @@ A Signature Agent advertises its identity through a resolvable `client_id` URL,
 as defined in {{CIMD}}. A consumer discovers the agent's metadata and keys as
 follows:
 
-1. Obtain a `client_id` URL, from a `Signature-Agent` header with `type=cimd`
-   ({{signature-agent-header}}), a registry entry, or out of band.
+1. Obtain a `client_id` URL from a `Signature-Agent` member with `type=cimd`
+   ({{signature-agent-header}}), a registry entry ({{discovery}}), or out of
+   band.
 2. Dereference the `client_id` with a `GET` request. The response MUST be
    `200 (OK)`, redirects MUST NOT be followed, and the returned `client_id` MUST
    match the requested URL (see {{signature-agent-parameter-client-id}}). The
@@ -413,15 +417,15 @@ Content-Type: application/json
 Example
 
 ~~~txt
-# An example list of bots
+# Bots, by their key directory
 https://bot1.example.com/.well-known/http-message-signatures-directory
 https://crawler2.example.com/.well-known/http-message-signatures-directory
 
-# Now the list of platforms
+# A platform, by its Signature Agent Card
 https://zerotrust-gateway.example.com/v1/signature-agent-card
 
-# Below is an inlined card with the data URL scheme
-data:application/json,{"client_name":"Inline Bot","jwks_uri":"https://inline.example.com/.well-known/http-message-signatures-directory"}
+# An inline card with the data URL scheme
+data:application/json,%7B%22client_name%22:%22Inline%20Bot%22%7D
 ~~~
 
 ## Formal Syntax
@@ -429,11 +433,11 @@ data:application/json,{"client_name":"Inline Bot","jwks_uri":"https://inline.exa
 Below is an Augmented Backus-Naur Form (ABNF) description, as described in {{ABNF}}.
 
 The below definition imports `https-URI` from {{HTTP}}, and `dataurl` from
-{{DATAURL}}.
+{{DATAURL}}. UTF-8 rules are derived from {{UTF8}}.
 
 ~~~
-registry = *(cardendpointline / emptyline)
-cardendpointline = (
+registry = *(entryline / emptyline)
+entryline = (
     https-URI /      ; As defined in Section 4.2.2 of RFC 9110
     dataurl          ; As defined in Section 3 of RFC 2397
 ) EOL
@@ -449,7 +453,7 @@ WS = %x20 / %x09
 ; UTF8 derived from RFC 3629, but excluding control characters
 
 UTF8-char-noctl = UTF8-1-noctl / UTF8-2 / UTF8-3 / UTF8-4
-UTF8-1-noctl = %x21 / %x22 / %x24-7F ; excluding control, space, "#"
+UTF8-1-noctl = %x21 / %x22 / %x24-7E ; excluding control, space, "#"
 UTF8-2 = %xC2-DF UTF8-tail
 UTF8-3 = %xE0 %xA0-BF UTF8-tail / %xE1-EC 2UTF8-tail /
          %xED %x80-9F UTF8-tail / %xEE-EF 2UTF8-tail
@@ -504,15 +508,43 @@ poll more frequently than indicated.
 
 ## Signature-Agent Header {#signature-agent-header}
 
-When used for HTTP Message Signatures, a Signature Agent Card MAY be discovered
-via a `Signature-Agent` header member with `type=cimd`. The URI carried in that
-member is the `client_id` of a Signature Agent Card resolved as described in
-{{cimd-discovery}}.
+A `Signature-Agent` member value is a JWK Set URL ({{Section 5.2.1 of
+PROTOCOL}}). This document defines the `type` member parameter with the value
+`cimd`: the member value is then the `client_id` of a Signature Agent Card,
+resolved as described in {{cimd-discovery}}, and the keys are the card's keys.
+
+~~~
+Signature-Agent: sig1="https://example.com/bot";type=cimd
+~~~
+
+{{PROTOCOL}} requires verifiers to ignore members with parameters. A verifier
+that does not implement this document therefore ignores a `type=cimd` member
+and cannot attribute the signature to it.
+
+TODO: {{PROTOCOL}} currently prohibits member parameters. This section assumes
+it will allow them.
 
 # Security Considerations
 
 Malicious actors may put properties which are not theirs in the registry. If signatures are present, clients MUST verify them.
 Clients SHOULD reject cards with invalid signatures.
+
+## Fetching Untrusted URLs
+
+A `client_id` from a `Signature-Agent` header, a registry entry, and a card's
+`jwks_uri` or `ips_uri` are all chosen by someone other than the client. A
+client fetching them is exposed to the server-side request forgery risks in
+{{Section 6.7 of PROTOCOL}}, and SHOULD apply the precautions listed there to
+every fetch defined in this document. A registry can list many entries, so it is
+RECOMMENDED that clients bound the number of cards fetched per registry.
+
+## Self-Asserted Metadata
+
+A valid card shows that whoever controls the `client_id` URL published it. As
+{{Section 4.4 of PROTOCOL}} puts it for keys, this does not mean the operator is
+honest. Every member of `web_bot_auth`, such as `purpose`, `rfc9309-compliance`,
+or `rate-expectation`, is a claim made by the Signature Agent. Clients MUST NOT
+treat these values as verified behavior.
 
 ## Registry Integrity
 
@@ -525,21 +557,12 @@ signatures when present.
 
 ## Binding Delegated Keys to the Directory Authority
 
-When a signature agent card delegates key discovery using `jwks_uri`, clients
-SHOULD validate the referenced directory response to ensure the authenticity
-and integrity of the delegated key material.
-
-When a directory server provides key material over HTTP or HTTPS, it is
-RECOMMENDED that it include one HTTP Message Signature per key in the response,
-with each key used to provide one signature. The signature SHOULD cover
-`@authority` with the `req` flag set, and SHOULD include the `created`,
-`expires`, `keyid`, and `tag` signature parameters. The `tag` value MUST be
-`http-message-signatures-directory`.
-
-Clients SHOULD validate these signatures using the keys provided by the
-directory. Clients SHOULD ignore keys from a directory response that do not have
-a corresponding valid signature binding the key material to the directory
-authority.
+When a card delegates key discovery using `jwks_uri`, the key set is a separate
+resource. {{Appendix B.1 of PROTOCOL}} defines possession proofs on that
+resource: the covered components, the signature parameters, and how clients
+validate them. Clients SHOULD ignore keys without a valid proof, as described in
+{{signature-agent-parameter-jwks-uri}}. Key material obtained any other way,
+such as a copy of the key set, is covered by {{Section 5.5.3 of PROTOCOL}}.
 
 ## Private Registries
 
@@ -617,9 +640,10 @@ address, email address, home page URI) may also be included.
 
 
 New entries in this registry are subject to the Specification Required
-registration policy ({{!RFC8126, Section 4.6}}). Designated experts can reject
-registrations on the basis that they do not meet the security and privacy
-requirements defined in TODO.
+registration policy ({{!RFC8126, Section 4.6}}). Designated experts should
+check that a new parameter does not duplicate an existing one or an OAuth client
+metadata parameter, that its value format is defined, and that the
+specification discusses the security and privacy impact of publishing it.
 
 ### Initial Registry Content
 
@@ -855,12 +879,13 @@ Notification = {
 }
 ~~~
 
-TODO: should we use application/json, a new media-type, permit binary encoding?
 TODO: should signature-agent be an array?
 
 `action` denotes the operation performed on the registry:
 1. `put` when a new entry has been added,
 2. `delete` when an entry has been removed.
+
+`signature-agent` is the registry entry, as in {{discovery}}.
 
 The request uses `POST` and is signed using {{HTTP-MESSAGE-SIGNATURES}} with a
 key present in the registry operator's existing signature agent card. This is
@@ -882,7 +907,7 @@ Content-Digest: sha-256=:base64hash:
 
 {
   "action": "put",
-  "signature-agent": "https://abc123.registry.example/.well-known/signature-agent-card"
+  "signature-agent": "https://abc123.registry.example/signature-agent-card"
 }
 ~~~
 
@@ -893,8 +918,7 @@ key, discovered via the registry operator's signature agent card. Notifications
 with missing or invalid signatures are rejected.
 
 A notification is advisory only. The registry endpoint remains authoritative.
-After verifying a `put` notification, clients re-fetch the affected signature
-agent card. For `delete` notifications, clients confirm the removal by
+After verifying a `put` notification, clients re-fetch the affected entry. For `delete` notifications, clients confirm the removal by
 re-fetching the registry.
 
 Registry operators should retry failed deliveries with exponential backoff.
@@ -914,11 +938,10 @@ The editor would also like to thank the following individuals (listed in alphabe
 
 draft-meunier-webbotauth-registry-04
 
-- Defer `Signature-Key` to draft-hardt-httpbis-signature-key.
+- Align with draft-ietf-webbotauth-httpsig-protocol; define `type=cimd`.
+- Allow JWK Set registry entries, selected by media type.
 - Make `rfc9309-compliance` a boolean.
-- Keep `purpose` open for further discussion.
-- Clarify `ips_uri` discovery.
-- Move change notifications to a non-normative appendix.
+- Move change notifications to an appendix.
 
 draft-meunier-webbotauth-registry-03
 
