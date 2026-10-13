@@ -10,30 +10,31 @@
 <meta content="Thibault Meunier" name="author">
 <meta content='
        This document defines the "Signature Agent Card", a JSON metadata document that a
-signature agent using   publishes to describe itself: its identity,
-purpose, rate expectations, and cryptographic keys. Its parameters are drawn from
-the OAuth Dynamic Client Registration Metadata registry  , the same
-namespace used by  , extended with a single  web_bot_auth  object. This
+signature agent using HTTP Message Signatures for bots publishes to describe
+itself: its identity, purpose, rate expectations, and cryptographic keys. Its
+parameters are drawn from the OAuth Dynamic Client Registration Metadata
+registry, the same namespace used by OAuth Client ID Metadata Documents,
+extended with a single  web_bot_auth  object. This
 document registers that object with IANA and establishes a registry for its
 members. 
     ' name="description">
-<meta content="xml2rfc 3.34.0" name="generator">
+<meta content="xml2rfc 3.34.1" name="generator">
 <meta content="not-yet" name="keyword">
 <meta content="draft-meunier-webbotauth-registry-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.34.0
-    Python 3.14.7
-    ConfigArgParse 1.7.5
+  xml2rfc 3.34.1
+    Python 3.14.8
+    ConfigArgParse 1.8.0
     google-i18n-address 3.1.1
     intervaltree 3.2.1
     Jinja2 3.1.6
     lxml 6.1.1
     natsort 8.4.0
-    platformdirs 4.11.7
+    platformdirs 4.12.2
     pycountry 24.6.1
     PyYAML 6.0.3
     requests 2.33.1
-    wcwidth 0.8.3
+    wcwidth 0.9.1
 -->
 <link href="draft-meunier-webbotauth-registry.xml" rel="alternate" type="application/rfc+xml">
 <link href="#copyright" rel="license">
@@ -1049,11 +1050,11 @@ svg {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Registry and Signature Agent card for We</td>
-<td class="right">September 2026</td>
+<td class="right">October 2026</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Guerreiro, et al.</td>
-<td class="center">Expires 14 March 2027</td>
+<td class="center">Expires 16 April 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1066,12 +1067,12 @@ svg {
 <dd class="internet-draft">draft-meunier-webbotauth-registry-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-09-10" class="published">10 September 2026</time>
+<time datetime="2026-10-13" class="published">13 October 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-03-14">14 March 2027</time></dd>
+<dd class="expires"><time datetime="2027-04-16">16 April 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1093,10 +1094,11 @@ svg {
 <section id="section-abstract">
       <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
 <p id="section-abstract-1">This document defines the "Signature Agent Card", a JSON metadata document that a
-signature agent using <span>[<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span> publishes to describe itself: its identity,
-purpose, rate expectations, and cryptographic keys. Its parameters are drawn from
-the OAuth Dynamic Client Registration Metadata registry <span>[<a href="#DCR" class="cite xref">DCR</a>]</span>, the same
-namespace used by <span>[<a href="#CIMD" class="cite xref">CIMD</a>]</span>, extended with a single <code>web_bot_auth</code> object. This
+signature agent using HTTP Message Signatures for bots publishes to describe
+itself: its identity, purpose, rate expectations, and cryptographic keys. Its
+parameters are drawn from the OAuth Dynamic Client Registration Metadata
+registry, the same namespace used by OAuth Client ID Metadata Documents,
+extended with a single <code>web_bot_auth</code> object. This
 document registers that object with IANA and establishes a registry for its
 members.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 </section>
@@ -1135,7 +1137,7 @@ members.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 14 March 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 16 April 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1259,13 +1261,19 @@ members.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
             <p id="section-toc.1-1.5.1"><a href="#section-5" class="auto internal xref">5</a>.  <a href="#name-security-considerations" class="internal xref">Security Considerations</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.1">
-                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-registry-integrity" class="internal xref">Registry Integrity</a></p>
+                <p id="section-toc.1-1.5.2.1.1"><a href="#section-5.1" class="auto internal xref">5.1</a>.  <a href="#name-fetching-untrusted-urls" class="internal xref">Fetching Untrusted URLs</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.2">
-                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-binding-delegated-keys-to-t" class="internal xref">Binding Delegated Keys to the Directory Authority</a></p>
+                <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-self-asserted-metadata" class="internal xref">Self-Asserted Metadata</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
-                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-private-registries" class="internal xref">Private Registries</a></p>
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-registry-integrity" class="internal xref">Registry Integrity</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.4">
+                <p id="section-toc.1-1.5.2.4.1"><a href="#section-5.4" class="auto internal xref">5.4</a>.  <a href="#name-binding-delegated-keys-to-t" class="internal xref">Binding Delegated Keys to the Directory Authority</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.5">
+                <p id="section-toc.1-1.5.2.5.1"><a href="#section-5.5" class="auto internal xref">5.5</a>.  <a href="#name-private-registries" class="internal xref">Private Registries</a></p>
 </li>
             </ul>
 </li>
@@ -1391,9 +1399,8 @@ defined in <a href="#web-bot-auth-extension" class="auto internal xref">Section 
 <p id="section-3-2">Because the card reuses the <span>[<a href="#CIMD" class="cite xref">CIMD</a>]</span> parameter namespace, an existing Client ID
 Metadata Document is a valid Signature Agent Card. A client that does not
 understand the <code>web_bot_auth</code> object ignores it.<a href="#section-3-2" class="pilcrow">¶</a></p>
-<p id="section-3-3">The Signature-Agent header is defined in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00#section-5.2.1" class="relref">Section 5.2.1</a> of [<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span>. A
-Signature Agent Card can be referenced from that header using <code>type=cimd</code>, as
-described in <a href="#cimd-discovery" class="auto internal xref">Section 4.1</a>.<a href="#section-3-3" class="pilcrow">¶</a></p>
+<p id="section-3-3">A Signature Agent Card can be referenced from the <code>Signature-Agent</code> header
+using <code>type=cimd</code>, as described in <a href="#signature-agent-header" class="auto internal xref">Section 4.5</a>.<a href="#section-3-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-3-4">
 <pre>
 {
@@ -1503,7 +1510,10 @@ string comparison).<a href="#section-3.1.1-2" class="pilcrow">¶</a></p>
           </h4>
 <p id="section-3.1.2-1">The <code>jwks_uri</code> parameter provides the URL of a JWK Set as defined in
 <span><a href="https://rfc-editor.org/rfc/rfc7517#section-5" class="relref">Section 5</a> of [<a href="#JWK" class="cite xref">JWK</a>]</span>, following the <span>[<a href="#DCR" class="cite xref">DCR</a>]</span> semantics. <span>[<a href="#DCR" class="cite xref">DCR</a>]</span> does not mandate
-a media type for the resource at <code>jwks_uri</code>.<a href="#section-3.1.2-1" class="pilcrow">¶</a></p>
+a media type for the resource at <code>jwks_uri</code>. If <code>jwks_uri</code> is the well-known URI
+registered in <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00#section-8.1" class="relref">Section 8.1</a> of [<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span>, the resource is an HTTP Message
+Signatures Directory, and <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00#section-5.5.1" class="relref">Section 5.5.1</a> of [<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span> applies, including its
+media type.<a href="#section-3.1.2-1" class="pilcrow">¶</a></p>
 <p id="section-3.1.2-2">When present, this parameter separates key material discovery from metadata
 discovery. Clients that need key material <span class="bcp14">SHOULD</span> fetch the key set at the
 given URL rather than relying on the <code>jwks</code> parameter. This separation allows
@@ -1512,9 +1522,11 @@ supporting deployment scenarios where the registry endpoint itself contains
 signature agent card metadata but key material is hosted elsewhere.<a href="#section-3.1.2-2" class="pilcrow">¶</a></p>
 <p id="section-3.1.2-3">A Signature Agent Card <span class="bcp14">MUST NOT</span> contain both <code>jwks_uri</code> and <code>jwks</code>. Clients
 <span class="bcp14">SHOULD</span> reject a card that contains both parameters.<a href="#section-3.1.2-3" class="pilcrow">¶</a></p>
-<p id="section-3.1.2-4">The resource at <code>jwks_uri</code> <span class="bcp14">SHOULD</span> be signed using <span>[<a href="#HTTP-MESSAGE-SIGNATURES" class="cite xref">HTTP-MESSAGE-SIGNATURES</a>]</span>.
-Clients <span class="bcp14">SHOULD</span> validate the signature and ignore keys that do not carry a
-corresponding valid signature.<a href="#section-3.1.2-4" class="pilcrow">¶</a></p>
+<p id="section-3.1.2-4">The response at <code>jwks_uri</code> <span class="bcp14">SHOULD</span> carry the possession proofs defined in
+<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00#appendix-B.1" class="relref">Appendix B.1</a> of [<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span>. Clients <span class="bcp14">SHOULD</span> validate them as described there,
+and <span class="bcp14">SHOULD</span> ignore keys without a valid proof. This is stricter than
+<span>[<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span>, which lets a verifier use keys it resolved itself without proof:
+a card binds keys to metadata, so the key holder should vouch for that binding.<a href="#section-3.1.2-4" class="pilcrow">¶</a></p>
 <p id="section-3.1.2-5">The URI scheme <span class="bcp14">MUST</span> be <code>https</code>.<a href="#section-3.1.2-5" class="pilcrow">¶</a></p>
 <p id="section-3.1.2-6">Example<a href="#section-3.1.2-6" class="pilcrow">¶</a></p>
 <ul class="normal">
@@ -1748,17 +1760,17 @@ from defining one.<a href="#section-3.2.10-3" class="pilcrow">¶</a></p>
       </h2>
 <p id="section-4-1">A Signature Agent Card is discovered by dereferencing its <code>client_id</code>, as
 described in <a href="#cimd-discovery" class="auto internal xref">Section 4.1</a>, or from a registry.<a href="#section-4-1" class="pilcrow">¶</a></p>
-<p id="section-4-2">A registry is a list of URLs, each referring to a signature agent card. An entry
-<span class="bcp14">MAY</span> be the <code>client_id</code> of a Signature Agent Card.<a href="#section-4-2" class="pilcrow">¶</a></p>
-<p id="section-4-3">The URI scheme <span class="bcp14">MUST</span> be one of:<a href="#section-4-3" class="pilcrow">¶</a></p>
-<ul class="normal">
-<li class="normal" id="section-4-4.1">
-          <p id="section-4-4.1.1">https: Points to an HTTPS resource serving a signature agent card<a href="#section-4-4.1.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="section-4-4.2">
-          <p id="section-4-4.2.1">data: Contains an inline signature agent card<a href="#section-4-4.2.1" class="pilcrow">¶</a></p>
-</li>
-      </ul>
+<p id="section-4-2">A registry is a list of entries. Each entry is an <code>https</code> URL or a <code>data</code> URL
+containing an inline Signature Agent Card.<a href="#section-4-2" class="pilcrow">¶</a></p>
+<p id="section-4-3">A client fetches an <code>https</code> entry with <code>GET</code>. If the response media type is
+<code>application/jwk-set+json</code> (<span><a href="https://rfc-editor.org/rfc/rfc7517#section-8.5" class="relref">Section 8.5</a> of [<a href="#JWK" class="cite xref">JWK</a>]</span>) or
+<code>application/http-message-signatures-directory+json</code>
+(<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00#section-8.2" class="relref">Section 8.2</a> of [<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span>), the response is a JWK Set, and the entry is
+resolved as a <code>Signature-Agent</code> value (<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00#section-5.5" class="relref">Section 5.5</a> of [<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span>). Otherwise,
+the entry is the <code>client_id</code> of a Signature Agent Card, and the response is
+processed as described in <a href="#cimd-discovery" class="auto internal xref">Section 4.1</a>.<a href="#section-4-3" class="pilcrow">¶</a></p>
+<p id="section-4-4">A JWK Set served with another media type, such as <code>application/json</code>, is
+therefore treated as a card, and rejected because it has no <code>client_id</code>.<a href="#section-4-4" class="pilcrow">¶</a></p>
 <div id="cimd-discovery">
 <section id="section-4.1">
         <h3 id="name-cimd-based-discovery">
@@ -1769,8 +1781,9 @@ as defined in <span>[<a href="#CIMD" class="cite xref">CIMD</a>]</span>. A consu
 follows:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="normal type-1" id="section-4.1-2">
 <li id="section-4.1-2.1">
-            <p id="section-4.1-2.1.1">Obtain a <code>client_id</code> URL, from a <code>Signature-Agent</code> header with <code>type=cimd</code>
-(<a href="#signature-agent-header" class="auto internal xref">Section 4.5</a>), a registry entry, or out of band.<a href="#section-4.1-2.1.1" class="pilcrow">¶</a></p>
+            <p id="section-4.1-2.1.1">Obtain a <code>client_id</code> URL from a <code>Signature-Agent</code> member with <code>type=cimd</code>
+(<a href="#signature-agent-header" class="auto internal xref">Section 4.5</a>), a registry entry (<a href="#discovery" class="auto internal xref">Section 4</a>), or out of
+band.<a href="#section-4.1-2.1.1" class="pilcrow">¶</a></p>
 </li>
           <li id="section-4.1-2.2">
             <p id="section-4.1-2.2.1">Dereference the <code>client_id</code> with a <code>GET</code> request. The response <span class="bcp14">MUST</span> be
@@ -1807,15 +1820,15 @@ Content-Type: application/json
 <p id="section-4.1-5">Example<a href="#section-4.1-5" class="pilcrow">¶</a></p>
 <div class="lang-txt sourcecode" id="section-4.1-6">
 <pre>
-# An example list of bots
+# Bots, by their key directory
 https://bot1.example.com/.well-known/http-message-signatures-directory
 https://crawler2.example.com/.well-known/http-message-signatures-directory
 
-# Now the list of platforms
+# A platform, by its Signature Agent Card
 https://zerotrust-gateway.example.com/v1/signature-agent-card
 
-# Below is an inlined card with the data URL scheme
-data:application/json,{"client_name":"Inline Bot","jwks_uri":"https://inline.example.com/.well-known/http-message-signatures-directory"}
+# An inline card with the data URL scheme
+data:application/json,%7B%22client_name%22:%22Inline%20Bot%22%7D
 </pre><a href="#section-4.1-6" class="pilcrow">¶</a>
 </div>
 </section>
@@ -1827,11 +1840,11 @@ data:application/json,{"client_name":"Inline Bot","jwks_uri":"https://inline.exa
         </h3>
 <p id="section-4.2-1">Below is an Augmented Backus-Naur Form (ABNF) description, as described in <span>[<a href="#ABNF" class="cite xref">ABNF</a>]</span>.<a href="#section-4.2-1" class="pilcrow">¶</a></p>
 <p id="section-4.2-2">The below definition imports <code>https-URI</code> from <span>[<a href="#HTTP" class="cite xref">HTTP</a>]</span>, and <code>dataurl</code> from
-<span>[<a href="#DATAURL" class="cite xref">DATAURL</a>]</span>.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
+<span>[<a href="#DATAURL" class="cite xref">DATAURL</a>]</span>. UTF-8 rules are derived from <span>[<a href="#UTF8" class="cite xref">UTF8</a>]</span>.<a href="#section-4.2-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4.2-3">
 <pre>
-registry = *(cardendpointline / emptyline)
-cardendpointline = (
+registry = *(entryline / emptyline)
+entryline = (
     https-URI /      ; As defined in Section 4.2.2 of RFC 9110
     dataurl          ; As defined in Section 3 of RFC 2397
 ) EOL
@@ -1847,7 +1860,7 @@ WS = %x20 / %x09
 ; UTF8 derived from RFC 3629, but excluding control characters
 
 UTF8-char-noctl = UTF8-1-noctl / UTF8-2 / UTF8-3 / UTF8-4
-UTF8-1-noctl = %x21 / %x22 / %x24-7F ; excluding control, space, "#"
+UTF8-1-noctl = %x21 / %x22 / %x24-7E ; excluding control, space, "#"
 UTF8-2 = %xC2-DF UTF8-tail
 UTF8-3 = %xE0 %xA0-BF UTF8-tail / %xE1-EC 2UTF8-tail /
          %xED %x80-9F UTF8-tail / %xEE-EF 2UTF8-tail
@@ -1923,10 +1936,19 @@ poll more frequently than indicated.<a href="#section-4.4.3-1" class="pilcrow">�
         <h3 id="name-signature-agent-header">
 <a href="#section-4.5" class="section-number selfRef">4.5. </a><a href="#name-signature-agent-header" class="section-name selfRef">Signature-Agent Header</a>
         </h3>
-<p id="section-4.5-1">When used for HTTP Message Signatures, a Signature Agent Card <span class="bcp14">MAY</span> be discovered
-via a <code>Signature-Agent</code> header member with <code>type=cimd</code>. The URI carried in that
-member is the <code>client_id</code> of a Signature Agent Card resolved as described in
-<a href="#cimd-discovery" class="auto internal xref">Section 4.1</a>.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
+<p id="section-4.5-1">A <code>Signature-Agent</code> member value is a JWK Set URL (<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00#section-5.2.1" class="relref">Section 5.2.1</a> of [<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span>). This document defines the <code>type</code> member parameter with the value
+<code>cimd</code>: the member value is then the <code>client_id</code> of a Signature Agent Card,
+resolved as described in <a href="#cimd-discovery" class="auto internal xref">Section 4.1</a>, and the keys are the card's keys.<a href="#section-4.5-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-4.5-2">
+<pre>
+Signature-Agent: sig1="https://example.com/bot";type=cimd
+</pre><a href="#section-4.5-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.5-3"><span>[<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span> requires verifiers to ignore members with parameters. A verifier
+that does not implement this document therefore ignores a <code>type=cimd</code> member
+and cannot attribute the signature to it.<a href="#section-4.5-3" class="pilcrow">¶</a></p>
+<p id="section-4.5-4">TODO: <span>[<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span> currently prohibits member parameters. This section assumes
+it will allow them.<a href="#section-4.5-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -1938,48 +1960,66 @@ member is the <code>client_id</code> of a Signature Agent Card resolved as descr
       </h2>
 <p id="section-5-1">Malicious actors may put properties which are not theirs in the registry. If signatures are present, clients <span class="bcp14">MUST</span> verify them.
 Clients <span class="bcp14">SHOULD</span> reject cards with invalid signatures.<a href="#section-5-1" class="pilcrow">¶</a></p>
-<div id="registry-integrity">
+<div id="fetching-untrusted-urls">
 <section id="section-5.1">
-        <h3 id="name-registry-integrity">
-<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-registry-integrity" class="section-name selfRef">Registry Integrity</a>
+        <h3 id="name-fetching-untrusted-urls">
+<a href="#section-5.1" class="section-number selfRef">5.1. </a><a href="#name-fetching-untrusted-urls" class="section-name selfRef">Fetching Untrusted URLs</a>
         </h3>
-<p id="section-5.1-1">When a registry is served over HTTPS, TLS provides channel integrity between
+<p id="section-5.1-1">A <code>client_id</code> from a <code>Signature-Agent</code> header, a registry entry, and a card's
+<code>jwks_uri</code> or <code>ips_uri</code> are all chosen by someone other than the client. A
+client fetching them is exposed to the server-side request forgery risks in
+<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00#section-6.7" class="relref">Section 6.7</a> of [<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span>, and <span class="bcp14">SHOULD</span> apply the precautions listed there to
+every fetch defined in this document. A registry can list many entries, so it is
+<span class="bcp14">RECOMMENDED</span> that clients bound the number of cards fetched per registry.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="self-asserted-metadata">
+<section id="section-5.2">
+        <h3 id="name-self-asserted-metadata">
+<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-self-asserted-metadata" class="section-name selfRef">Self-Asserted Metadata</a>
+        </h3>
+<p id="section-5.2-1">A valid card shows that whoever controls the <code>client_id</code> URL published it. As
+<span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00#section-4.4" class="relref">Section 4.4</a> of [<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span> puts it for keys, this does not mean the operator is
+honest. Every member of <code>web_bot_auth</code>, such as <code>purpose</code>, <code>rfc9309-compliance</code>,
+or <code>rate-expectation</code>, is a claim made by the Signature Agent. Clients <span class="bcp14">MUST NOT</span>
+treat these values as verified behavior.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="registry-integrity">
+<section id="section-5.3">
+        <h3 id="name-registry-integrity">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-registry-integrity" class="section-name selfRef">Registry Integrity</a>
+        </h3>
+<p id="section-5.3-1">When a registry is served over HTTPS, TLS provides channel integrity between
 the server and the client. To additionally bind the registry contents to the
 registry operator's cryptographic identity, registry servers <span class="bcp14">SHOULD</span> sign their
 HTTP responses using <span>[<a href="#HTTP-MESSAGE-SIGNATURES" class="cite xref">HTTP-MESSAGE-SIGNATURES</a>]</span> with a key present in the
 registry operator's own signature agent card. Clients <span class="bcp14">SHOULD</span> verify such
-signatures when present.<a href="#section-5.1-1" class="pilcrow">¶</a></p>
+signatures when present.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="binding-delegated-keys-to-the-directory-authority">
-<section id="section-5.2">
+<section id="section-5.4">
         <h3 id="name-binding-delegated-keys-to-t">
-<a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-binding-delegated-keys-to-t" class="section-name selfRef">Binding Delegated Keys to the Directory Authority</a>
+<a href="#section-5.4" class="section-number selfRef">5.4. </a><a href="#name-binding-delegated-keys-to-t" class="section-name selfRef">Binding Delegated Keys to the Directory Authority</a>
         </h3>
-<p id="section-5.2-1">When a signature agent card delegates key discovery using <code>jwks_uri</code>, clients
-<span class="bcp14">SHOULD</span> validate the referenced directory response to ensure the authenticity
-and integrity of the delegated key material.<a href="#section-5.2-1" class="pilcrow">¶</a></p>
-<p id="section-5.2-2">When a directory server provides key material over HTTP or HTTPS, it is
-<span class="bcp14">RECOMMENDED</span> that it include one HTTP Message Signature per key in the response,
-with each key used to provide one signature. The signature <span class="bcp14">SHOULD</span> cover
-<code>@authority</code> with the <code>req</code> flag set, and <span class="bcp14">SHOULD</span> include the <code>created</code>,
-<code>expires</code>, <code>keyid</code>, and <code>tag</code> signature parameters. The <code>tag</code> value <span class="bcp14">MUST</span> be
-<code>http-message-signatures-directory</code>.<a href="#section-5.2-2" class="pilcrow">¶</a></p>
-<p id="section-5.2-3">Clients <span class="bcp14">SHOULD</span> validate these signatures using the keys provided by the
-directory. Clients <span class="bcp14">SHOULD</span> ignore keys from a directory response that do not have
-a corresponding valid signature binding the key material to the directory
-authority.<a href="#section-5.2-3" class="pilcrow">¶</a></p>
+<p id="section-5.4-1">When a card delegates key discovery using <code>jwks_uri</code>, the key set is a separate
+resource. <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00#appendix-B.1" class="relref">Appendix B.1</a> of [<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span> defines possession proofs on that
+resource: the covered components, the signature parameters, and how clients
+validate them. Clients <span class="bcp14">SHOULD</span> ignore keys without a valid proof, as described in
+<a href="#signature-agent-parameter-jwks-uri" class="auto internal xref">Section 3.1.2</a>. Key material obtained any other way,
+such as a copy of the key set, is covered by <span><a href="https://datatracker.ietf.org/doc/html/draft-ietf-webbotauth-httpsig-protocol-00#section-5.5.3" class="relref">Section 5.5.3</a> of [<a href="#PROTOCOL" class="cite xref">PROTOCOL</a>]</span>.<a href="#section-5.4-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="private-registries">
-<section id="section-5.3">
+<section id="section-5.5">
         <h3 id="name-private-registries">
-<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-private-registries" class="section-name selfRef">Private Registries</a>
+<a href="#section-5.5" class="section-number selfRef">5.5. </a><a href="#name-private-registries" class="section-name selfRef">Private Registries</a>
         </h3>
-<p id="section-5.3-1">Registry endpoints that require authentication as described in
+<p id="section-5.5-1">Registry endpoints that require authentication as described in
 <a href="#registry-authentication" class="auto internal xref">Section 4.4.1</a> limit exposure of registry entries to authorized
 clients only. Registry operators <span class="bcp14">SHOULD</span> use authenticated endpoints when the
-enumeration of their registry entries is sensitive.<a href="#section-5.3-1" class="pilcrow">¶</a></p>
+enumeration of their registry entries is sensitive.<a href="#section-5.5-1" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2090,9 +2130,10 @@ address, email address, home page URI) may also be included.<a href="#section-7.
           <dd class="break"></dd>
 </dl>
 <p id="section-7.2.1-3">New entries in this registry are subject to the Specification Required
-registration policy (<span>[<a href="#RFC8126" class="cite xref">RFC8126</a>], <a href="https://rfc-editor.org/rfc/rfc8126#section-4.6" class="relref">Section 4.6</a></span>). Designated experts can reject
-registrations on the basis that they do not meet the security and privacy
-requirements defined in TODO.<a href="#section-7.2.1-3" class="pilcrow">¶</a></p>
+registration policy (<span>[<a href="#RFC8126" class="cite xref">RFC8126</a>], <a href="https://rfc-editor.org/rfc/rfc8126#section-4.6" class="relref">Section 4.6</a></span>). Designated experts should
+check that a new parameter does not duplicate an existing one or an OAuth client
+metadata parameter, that its value format is defined, and that the
+specification discusses the security and privacy impact of publishing it.<a href="#section-7.2.1-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="initial-registry-content">
@@ -2484,10 +2525,6 @@ in <a href="#web-bot-auth-extension" class="auto internal xref">Section 3.2</a> 
         <dd>
 <span class="refAuthor">Backman, A., Ed.</span>, <span class="refAuthor">Richer, J., Ed.</span>, and <span class="refAuthor">M. Sporny</span>, <span class="refTitle">"HTTP Message Signatures"</span>, <span class="seriesInfo">RFC 9421</span>, <span class="seriesInfo">DOI 10.17487/RFC9421</span>, <time datetime="2024-02" class="refDate">February 2024</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9421">https://www.rfc-editor.org/rfc/rfc9421</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="HTTP-MORE-STATUS-CODE">[HTTP-MORE-STATUS-CODE]</dt>
-        <dd>
-<span class="refAuthor">Nottingham, M.</span> and <span class="refAuthor">R. Fielding</span>, <span class="refTitle">"Additional HTTP Status Codes"</span>, <span class="seriesInfo">RFC 6585</span>, <span class="seriesInfo">DOI 10.17487/RFC6585</span>, <time datetime="2012-04" class="refDate">April 2012</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6585">https://www.rfc-editor.org/rfc/rfc6585</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="JAFAR">[JAFAR]</dt>
         <dd>
 <span class="refAuthor">Illyes, G.</span>, <span class="refTitle">"A JSON-Based Format for Publishing IP Ranges of Automated HTTP Clients"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-illyes-webbotauth-jafar-00</span>, <time datetime="2026-04-21" class="refDate">21 April 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-illyes-webbotauth-jafar-00">https://datatracker.ietf.org/doc/html/draft-illyes-webbotauth-jafar-00</a>&gt;</span>. </dd>
@@ -2495,14 +2532,6 @@ in <a href="#web-bot-auth-extension" class="auto internal xref">Section 3.2</a> 
 <dt id="JWK">[JWK]</dt>
         <dd>
 <span class="refAuthor">Jones, M.</span>, <span class="refTitle">"JSON Web Key (JWK)"</span>, <span class="seriesInfo">RFC 7517</span>, <span class="seriesInfo">DOI 10.17487/RFC7517</span>, <time datetime="2015-05" class="refDate">May 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7517">https://www.rfc-editor.org/rfc/rfc7517</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="JWK-OKP">[JWK-OKP]</dt>
-        <dd>
-<span class="refAuthor">Liusvaara, I.</span>, <span class="refTitle">"CFRG Elliptic Curve Diffie-Hellman (ECDH) and Signatures in JSON Object Signing and Encryption (JOSE)"</span>, <span class="seriesInfo">RFC 8037</span>, <span class="seriesInfo">DOI 10.17487/RFC8037</span>, <time datetime="2017-01" class="refDate">January 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8037">https://www.rfc-editor.org/rfc/rfc8037</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="JWK-THUMBPRINT">[JWK-THUMBPRINT]</dt>
-        <dd>
-<span class="refAuthor">Jones, M.</span> and <span class="refAuthor">N. Sakimura</span>, <span class="refTitle">"JSON Web Key (JWK) Thumbprint"</span>, <span class="seriesInfo">RFC 7638</span>, <span class="seriesInfo">DOI 10.17487/RFC7638</span>, <time datetime="2015-09" class="refDate">September 2015</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc7638">https://www.rfc-editor.org/rfc/rfc7638</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="PROTOCOL">[PROTOCOL]</dt>
         <dd>
@@ -2535,11 +2564,7 @@ in <a href="#web-bot-auth-extension" class="auto internal xref">Section 3.2</a> 
 <dl class="references">
 <dt id="AIPREF-VOCAB">[AIPREF-VOCAB]</dt>
         <dd>
-<span class="refAuthor">Keller, P.</span> and <span class="refAuthor">M. Thomson</span>, <span class="refTitle">"A Vocabulary For Expressing AI Usage Preferences"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-aipref-vocab-07</span>, <time datetime="2026-08-18" class="refDate">18 August 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-aipref-vocab-07">https://datatracker.ietf.org/doc/html/draft-ietf-aipref-vocab-07</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="CBCP">[CBCP]</dt>
-        <dd>
-<span class="refAuthor">Illyes, G.</span>, <span class="refAuthor">Kühlewind, M.</span>, and <span class="refAuthor">K. Aj</span>, <span class="refTitle">"Crawler best practices"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-illyes-webbotauth-cbcp-00</span>, <time datetime="2026-04-21" class="refDate">21 April 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-illyes-webbotauth-cbcp-00">https://datatracker.ietf.org/doc/html/draft-illyes-webbotauth-cbcp-00</a>&gt;</span>. </dd>
+<span class="refAuthor">Keller, P.</span> and <span class="refAuthor">M. Thomson</span>, <span class="refTitle">"A Vocabulary For Expressing AI Usage Preferences"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-aipref-vocab-08</span>, <time datetime="2026-09-13" class="refDate">13 September 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-aipref-vocab-08">https://datatracker.ietf.org/doc/html/draft-ietf-aipref-vocab-08</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="CDDL">[CDDL]</dt>
         <dd>
@@ -2553,10 +2578,6 @@ in <a href="#web-bot-auth-extension" class="auto internal xref">Section 3.2</a> 
         <dd>
 <span class="refAuthor">Jones, M.</span> and <span class="refAuthor">D. Hardt</span>, <span class="refTitle">"The OAuth 2.0 Authorization Framework: Bearer Token Usage"</span>, <span class="seriesInfo">RFC 6750</span>, <span class="seriesInfo">DOI 10.17487/RFC6750</span>, <time datetime="2012-10" class="refDate">October 2012</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc6750">https://www.rfc-editor.org/rfc/rfc6750</a>&gt;</span>. </dd>
 <dd class="break"></dd>
-<dt id="OPENID-CONNECT-DISCOVERY">[OPENID-CONNECT-DISCOVERY]</dt>
-        <dd>
-<span class="refTitle">"OpenID Connect Discovery 1.0"</span>, <span>n.d.</span>, <span>&lt;<a href="https://openid.net/specs/openid-connect-discovery-1_0.html">https://openid.net/specs/openid-connect-discovery-1_0.html</a>&gt;</span>. </dd>
-<dd class="break"></dd>
 <dt id="PSK-TLS">[PSK-TLS]</dt>
         <dd>
 <span class="refAuthor">Housley, R.</span>, <span class="refAuthor">Hoyland, J.</span>, <span class="refAuthor">Sethi, M.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Guidance for External Pre-Shared Key (PSK) Usage in TLS"</span>, <span class="seriesInfo">RFC 9257</span>, <span class="seriesInfo">DOI 10.17487/RFC9257</span>, <time datetime="2022-07" class="refDate">July 2022</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc9257">https://www.rfc-editor.org/rfc/rfc9257</a>&gt;</span>. </dd>
@@ -2564,10 +2585,6 @@ in <a href="#web-bot-auth-extension" class="auto internal xref">Section 3.2</a> 
 <dt id="RATELIMIT-HEADER">[RATELIMIT-HEADER]</dt>
         <dd>
 <span class="refAuthor">Polli, R.</span>, <span class="refAuthor">Ruiz, A. M.</span>, and <span class="refAuthor">D. Miller</span>, <span class="refTitle">"RateLimit header fields for HTTP"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-httpapi-ratelimit-headers-11</span>, <time datetime="2026-05-23" class="refDate">23 May 2026</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-ratelimit-headers-11">https://datatracker.ietf.org/doc/html/draft-ietf-httpapi-ratelimit-headers-11</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="RFC8446">[RFC8446]</dt>
-        <dd>
-<span class="refAuthor">Rescorla, E.</span>, <span class="refTitle">"The Transport Layer Security (TLS) Protocol Version 1.3"</span>, <span class="seriesInfo">RFC 8446</span>, <span class="seriesInfo">DOI 10.17487/RFC8446</span>, <time datetime="2018-08" class="refDate">August 2018</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8446">https://www.rfc-editor.org/rfc/rfc8446</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="ROBOTSTXT">[ROBOTSTXT]</dt>
         <dd>
@@ -2663,18 +2680,18 @@ Notification = {
 }
 </pre><a href="#appendix-C.3-3" class="pilcrow">¶</a>
 </div>
-<p id="appendix-C.3-4">TODO: should we use application/json, a new media-type, permit binary encoding?
-TODO: should signature-agent be an array?<a href="#appendix-C.3-4" class="pilcrow">¶</a></p>
+<p id="appendix-C.3-4">TODO: should signature-agent be an array?<a href="#appendix-C.3-4" class="pilcrow">¶</a></p>
 <p id="appendix-C.3-5"><code>action</code> denotes the operation performed on the registry:
 1. <code>put</code> when a new entry has been added,
 2. <code>delete</code> when an entry has been removed.<a href="#appendix-C.3-5" class="pilcrow">¶</a></p>
-<p id="appendix-C.3-6">The request uses <code>POST</code> and is signed using <span>[<a href="#HTTP-MESSAGE-SIGNATURES" class="cite xref">HTTP-MESSAGE-SIGNATURES</a>]</span> with a
+<p id="appendix-C.3-6"><code>signature-agent</code> is the registry entry, as in <a href="#discovery" class="auto internal xref">Section 4</a>.<a href="#appendix-C.3-6" class="pilcrow">¶</a></p>
+<p id="appendix-C.3-7">The request uses <code>POST</code> and is signed using <span>[<a href="#HTTP-MESSAGE-SIGNATURES" class="cite xref">HTTP-MESSAGE-SIGNATURES</a>]</span> with a
 key present in the registry operator's existing signature agent card. This is
 the card associated with the registry operator during out-of-band callback
-registration.<a href="#appendix-C.3-6" class="pilcrow">¶</a></p>
-<p id="appendix-C.3-7">The <code>Content-Type</code> is <code>application/json</code>.<a href="#appendix-C.3-7" class="pilcrow">¶</a></p>
-<p id="appendix-C.3-8">Example notification for an added entry:<a href="#appendix-C.3-8" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="appendix-C.3-9">
+registration.<a href="#appendix-C.3-7" class="pilcrow">¶</a></p>
+<p id="appendix-C.3-8">The <code>Content-Type</code> is <code>application/json</code>.<a href="#appendix-C.3-8" class="pilcrow">¶</a></p>
+<p id="appendix-C.3-9">Example notification for an added entry:<a href="#appendix-C.3-9" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="appendix-C.3-10">
 <pre>
 POST /registry-callback HTTP/1.1
 Host: origin.example
@@ -2686,9 +2703,9 @@ Content-Digest: sha-256=:base64hash:
 
 {
   "action": "put",
-  "signature-agent": "https://abc123.registry.example/.well-known/signature-agent-card"
+  "signature-agent": "https://abc123.registry.example/signature-agent-card"
 }
-</pre><a href="#appendix-C.3-9" class="pilcrow">¶</a>
+</pre><a href="#appendix-C.3-10" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
@@ -2701,8 +2718,7 @@ Content-Digest: sha-256=:base64hash:
 key, discovered via the registry operator's signature agent card. Notifications
 with missing or invalid signatures are rejected.<a href="#appendix-C.4-1" class="pilcrow">¶</a></p>
 <p id="appendix-C.4-2">A notification is advisory only. The registry endpoint remains authoritative.
-After verifying a <code>put</code> notification, clients re-fetch the affected signature
-agent card. For <code>delete</code> notifications, clients confirm the removal by
+After verifying a <code>put</code> notification, clients re-fetch the affected entry. For <code>delete</code> notifications, clients confirm the removal by
 re-fetching the registry.<a href="#appendix-C.4-2" class="pilcrow">¶</a></p>
 <p id="appendix-C.4-3">Registry operators should retry failed deliveries with exponential backoff.
 Clients that miss notifications recover on their next conditional pull.<a href="#appendix-C.4-3" class="pilcrow">¶</a></p>
@@ -2727,19 +2743,16 @@ Clients that miss notifications recover on their next conditional pull.<a href="
 <p id="appendix-E-1">draft-meunier-webbotauth-registry-04<a href="#appendix-E-1" class="pilcrow">¶</a></p>
 <ul class="normal">
 <li class="normal" id="appendix-E-2.1">
-          <p id="appendix-E-2.1.1">Defer <code>Signature-Key</code> to draft-hardt-httpbis-signature-key.<a href="#appendix-E-2.1.1" class="pilcrow">¶</a></p>
+          <p id="appendix-E-2.1.1">Align with draft-ietf-webbotauth-httpsig-protocol; define <code>type=cimd</code>.<a href="#appendix-E-2.1.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-E-2.2">
-          <p id="appendix-E-2.2.1">Make <code>rfc9309-compliance</code> a boolean.<a href="#appendix-E-2.2.1" class="pilcrow">¶</a></p>
+          <p id="appendix-E-2.2.1">Allow JWK Set registry entries, selected by media type.<a href="#appendix-E-2.2.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-E-2.3">
-          <p id="appendix-E-2.3.1">Keep <code>purpose</code> open for further discussion.<a href="#appendix-E-2.3.1" class="pilcrow">¶</a></p>
+          <p id="appendix-E-2.3.1">Make <code>rfc9309-compliance</code> a boolean.<a href="#appendix-E-2.3.1" class="pilcrow">¶</a></p>
 </li>
         <li class="normal" id="appendix-E-2.4">
-          <p id="appendix-E-2.4.1">Clarify <code>ips_uri</code> discovery.<a href="#appendix-E-2.4.1" class="pilcrow">¶</a></p>
-</li>
-        <li class="normal" id="appendix-E-2.5">
-          <p id="appendix-E-2.5.1">Move change notifications to a non-normative appendix.<a href="#appendix-E-2.5.1" class="pilcrow">¶</a></p>
+          <p id="appendix-E-2.4.1">Move change notifications to an appendix.<a href="#appendix-E-2.4.1" class="pilcrow">¶</a></p>
 </li>
       </ul>
 <p id="appendix-E-3">draft-meunier-webbotauth-registry-03<a href="#appendix-E-3" class="pilcrow">¶</a></p>
