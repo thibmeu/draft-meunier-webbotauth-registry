@@ -5,10 +5,10 @@
 Web Bot Auth                                                M. Guerreiro
 Internet-Draft                                                Cloudflare
 Intended status: Informational                                U. Kirazci
-Expires: 16 April 2027                                            Amazon
+Expires: 30 April 2027                                            Amazon
                                                               T. Meunier
                                                               Cloudflare
-                                                         13 October 2026
+                                                         27 October 2026
 
 
            Registry and Signature Agent card for Web bot auth
@@ -58,7 +58,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 16 April 2027.
+   This Internet-Draft will expire on 30 April 2027.
 
 Copyright Notice
 
@@ -879,9 +879,9 @@ Content-Type: application/json
 
    [JAFAR]    Illyes, G., "A JSON-Based Format for Publishing IP Ranges
               of Automated HTTP Clients", Work in Progress, Internet-
-              Draft, draft-illyes-webbotauth-jafar-00, 21 April 2026,
+              Draft, draft-illyes-webbotauth-jafar-01, 22 October 2026,
               <https://datatracker.ietf.org/doc/html/draft-illyes-
-              webbotauth-jafar-00>.
+              webbotauth-jafar-01>.
 
    [JWK]      Jones, M., "JSON Web Key (JWK)", RFC 7517,
               DOI 10.17487/RFC7517, May 2015,
